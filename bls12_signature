@@ -9,7 +9,6 @@ fn bls_signature(){
     let bytes = message.as_bytes();
     repr.read_le(&bytes[..]).unwrap();
     let messagefr = Fr::from_repr(repr).unwrap();
-    //println!("Message to Fr :{:#?}", messagefr);
 
     let mut rng = rand::thread_rng();
     let generator_one = <Bls12 as Engine>::G1Affine::one();
