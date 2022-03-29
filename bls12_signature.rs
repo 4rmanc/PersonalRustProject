@@ -1,3 +1,4 @@
+#[test]
 fn bls_signature(){
     use bellman::bls12_381::{Fr, Bls12};
     use bellman::{PrimeField, PrimeFieldRepr, Engine, CurveAffine, CurveProjective};
