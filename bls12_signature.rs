@@ -15,8 +15,6 @@ fn bls_signature(){
     let generator_two = <Bls12 as Engine>::G2Affine::one();
     let private_key = Fr::rand(&mut rng);
     let public_key = generator_one.mul(private_key);
-    
-    
 
     let result = rescue_hash::<Bls12, 1>(&[messagefr]);
     let hash = generator_two.mul(result[1]);
