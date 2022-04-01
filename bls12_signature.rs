@@ -34,25 +34,36 @@ fn aggregated_same_message(){
     use bellman::bls12_381::{Fr, Bls12};
     use bellman::{PrimeField, PrimeFieldRepr, Engine, CurveAffine, CurveProjective};
     use rescue_poseidon::rescue_hash;
-    use rand::Rand;
-    let message = "South Park is the best cartoon.";
+    use rand::{Rand, Rng};
     let mut repr = <Fr as PrimeField>::Repr::default();
+    let mut rng = rand::thread_rng();
 
-    let bytes = message.as_bytes();
-    repr.read_le(&bytes[..]).unwrap();
+    //RANDOM MESSAGE
+    let mut random_message_value: Vec<u8> = Vec::new();
+    random_message_value.push(0);
+    let mut i = 0;
+    while i < 48{ 
+    random_message_value.push(rng.gen::<u8>()%101);
+    i += 1;
+    }
+    repr.read_le(&random_message_value[..]).unwrap();
     let messagefr = Fr::from_repr(repr).unwrap();
 
-    let mut rng = rand::thread_rng();
+    //GENERATORS
     let generator_one = <Bls12 as Engine>::G1Affine::one();
     let generator_two = <Bls12 as Engine>::G2Affine::one();
+
+    //3 DIFFERENT PRIVATE KEYS
     let private_key_one = Fr::rand(&mut rng);
     let private_key_two = Fr::rand(&mut rng);
     let private_key_three = Fr::rand(&mut rng);
 
+    //PUBLIC KEYS
     let public_key_one = generator_one.mul(private_key_one);
     let public_key_two = generator_one.mul(private_key_two);
     let public_key_three = generator_one.mul(private_key_three);
 
+    //AGGREGATED PUBLIC KEYS
     let mut aggregated_pub_keys = public_key_one;
     aggregated_pub_keys.add_assign(&public_key_two);
     aggregated_pub_keys.add_assign(&public_key_three);
@@ -61,10 +72,12 @@ fn aggregated_same_message(){
     let hash = generator_two.mul(result[1]);
     let hash_affine = hash.into_affine();
 
+    //SIGNATURES
     let signature_one = hash_affine.mul(private_key_one);
     let signature_two = hash_affine.mul(private_key_two);
     let signature_three = hash_affine.mul(private_key_three);
 
+    //AGGREGATED SIGNATURE
     let mut aggregated_signature = signature_one;
     aggregated_signature.add_assign(&signature_two);
     aggregated_signature.add_assign(&signature_three);
@@ -115,9 +128,14 @@ fn multi_message_bls_signature(){
 
     //RANDOM MESSAGES CREATED, HASHED AND STORED
     while counter < random_number{
-        let random_str = (&rng.gen::<u32>()).to_string();
-        let bytes = random_str.as_bytes();
-        repr.read_le(&bytes[..]);
+        let mut random_message_value: Vec<u8> = Vec::new();
+        random_message_value.push(0);
+        let mut i = 0;
+        while i < 48{ 
+        random_message_value.push(rng.gen::<u8>()%101);
+        i += 1;
+        }
+        repr.read_le(&random_message_value[..]).unwrap();
         let messagefr = Fr::from_repr(repr).unwrap();
         let result = rescue_hash::<Bls12, 1>(&[messagefr]);
         let hash = generator_two.mul(result[1]);
@@ -160,5 +178,4 @@ fn multi_message_bls_signature(){
     assert_eq!(pair_one, pair_two);
 
 }
-
 
