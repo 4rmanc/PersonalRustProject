@@ -20,7 +20,7 @@ impl Polynomial{
         }
         poly
     }
-    //Evaluates polynomial in u8 bounds.
+    //Evaluates polynomial in u64 bounds.
     fn eval_poly(&self, x:u64) -> u64{
         let mut poly = Vec::new();
         let mut counter = 0;
@@ -35,7 +35,7 @@ impl Polynomial{
         }
         answer
     }
-    //Converts u8 polynomial's coefficients to the corresponding field elements
+    //Converts polynomial's coefficients to the corresponding field elements
     fn to_field(&self) -> Vec<bellman::bls12_381::Fr>{
         use bellman::bls12_381::Fr;
         use bellman::{PrimeField, PrimeFieldRepr};
